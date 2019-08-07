@@ -112,6 +112,8 @@ filebeat-config:
 {%- else %}
     {%- if grains['os_family'] == 'MacOS' %}
     - name: /usr/local/etc/filebeat/filebeat.yml
+    - user: root
+    - group: wheel
     {%- else %}
     - name: /etc/filebeat/filebeat.yml
     {%- endif %}
