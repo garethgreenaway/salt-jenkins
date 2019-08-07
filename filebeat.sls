@@ -146,10 +146,10 @@ filebeat-enable-system-module:
     - unless: test -f /usr/local/etc/filebeat/modules.d/system.yml
     - require:
       {%- if grains['os_family'] == 'MacOS' %}
-      - module.run: install-filebeat
+      - module: install-filebeat
       {%- else %}
       - cmd: install-filebeat
-      {%- end %}
+      {%- endif %}
 {%- endif %}
 
 {%- if grains['os_family'] == 'MacOS' %}
