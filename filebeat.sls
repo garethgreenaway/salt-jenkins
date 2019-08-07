@@ -76,12 +76,12 @@ install-filebeat:
     {%- if pkg_check_installed_cmd is defined %}
     - unless: {{ pkg_check_installed_cmd }}
     {%- endif %}
-{%- elif %}
+{%- else %}
 install-filebeat:
   module.run:
-    - pkg.install:
-      - name: elastic/tap/filebeat-full
-      - tap: elastic/tap
+    - name: pkg.install
+    - m_name: elastic/tap/filebeat-full
+    - tap: elastic/tap
 {%- endif %}
 
 filebeat-config:
@@ -143,17 +143,21 @@ filebeat-config:
 filebeat-enable-system-module:
   cmd.run:
     - name: filebeat modules enable system
-    - unless: test -f /etc/filebeat/modules.d/system.yml
+    - unless: test -f /usr/local/etc/filebeat/modules.d/system.yml
     - require:
+      {%- if grains['os_family'] == 'MacOS' %}
+      - module.run: install-filebeat
+      {%- else %}
       - cmd: install-filebeat
+      {%- end %}
 {%- endif %}
 
 {%- if grains['os_family'] == 'MacOS' %}
-filebeat:
-  service.enabled
-{%- else %}
 start_filebeat:
   cmd.run:
     - name: brew services start elastic/tap/filebeat-full 
+{%- else %}
+filebeat:
+  service.enabled
 {%- endif %}
 {%- endif %}
